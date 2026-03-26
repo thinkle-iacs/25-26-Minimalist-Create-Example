@@ -3,6 +3,7 @@ import { TextInterface } from "text-interface";
 
 const app = document.querySelector("#app");
 const ti = new TextInterface(app);
+ti.setTitle("Guess my Point!");
 
 function distance(p1, p2) {
   let xsquared = (p1[0] - p2[0]) ** 2;
@@ -16,29 +17,28 @@ function displayGuessFeedback(guesses, target) {
     let dist = distance(guess, target);
     ti.output(`(${guess[0]}, ${guess[1]})\t${dist.toFixed(2)} `);
     if (dist === 0) {
-      ti.output(`(${guess[0]}, ${guess[1]})\tCorrect!`);
-      ti.output('YOU WIN!!!!!!!!')
+      ti.output(`(${guess[0]}, ${guess[1]})\tCorrect!!!`);
       return true;
     }
   }
 }
 
-function main() {
-  let targetPoint = [Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
+async function main() {
+  let targetPoint = [Math.floor(Math.random() * 20), Math.floor(Math.random() * 20)];
   let guessPoints = [];
   let gameOver = false;
-  ti.prompt("Welcome to the Guessing Game! Try to guess the target point (x, y) on a 100x100 grid.");
+  ti.prompt("Welcome to the Guessing Game! Try to guess the target point (x, y) on a 20x20 grid.");
   while (!gameOver) {
-    let x = ti.promptIntegerInRange("X: ", 0, 100);
-    let y = ti.promptIntegerInRange("Y: ", 0, 100);
+    let xy = await ti.promptIntegerInRange("X: ", 0, 20);
+    let y = await ti.promptIntegerInRange("Y: ", 0, 20);
     guessPoints.push([x, y]);
     gameOver = displayGuessFeedback(guessPoints, targetPoint);
   }
-  if (ti.promptYesOrNo("Play again? (y/n)")) {
-    main();
+  if (await ti.promptYesOrNo("Play again? (y/n)")) {
+    await main();
   } else {
     ti.output("Thanks for playing!");
   }
 }
 
-main();
+await main();
